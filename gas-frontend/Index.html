@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sennin Account</title>
+<style>
+:root{--blue:#1a73e8;--blue-h:#1557b0;--blue-l:#e8f0fe;--bd:#dadce0;--bd-h:#202124;--tx:#202124;--sub:#5f6368;--red:#d93025;--green:#137333;--bg-card:#fff;--bg-body:#f8f9fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Roboto,"Noto Sans JP",-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg-body);color:var(--tx);min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:24px 16px}
+.wrap{width:100%;max-width:640px;margin-top:2vh}
+.card{background:var(--bg-card);border:1px solid var(--bd);border-radius:12px;padding:40px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+@media(max-width:480px){.card{padding:24px 16px;border:none;box-shadow:none;background:transparent}}
+.brand{text-align:center;margin-bottom:24px}.brand svg{width:44px;height:44px;display:block;margin:0 auto 10px}
+.brand div{font-size:24px;letter-spacing:-.3px}.brand b{color:var(--blue);font-weight:500}
+h2{font-size:24px;font-weight:400;text-align:center;margin-bottom:8px;color:var(--tx)}
+h3{font-size:15px;font-weight:500;margin:20px 0 10px;color:var(--tx)}
+.desc{text-align:center;color:var(--sub);font-size:14px;margin-bottom:24px;line-height:1.6}
+.field{margin-bottom:16px}
+label.l{display:block;font-size:12px;font-weight:500;color:var(--sub);margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px 14px;font:inherit;font-size:15px;border:1px solid var(--bd);border-radius:6px;outline:none;background:#fff;color:var(--tx);transition:border-color .2s,box-shadow .2s}
+textarea{font-family:monospace;font-size:12px;min-height:80px}
+input:hover,textarea:hover{border-color:var(--bd-h)}input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,115,232,.2)}
+input[type=checkbox]{width:auto;margin-right:8px}
+.btn{width:100%;height:40px;padding:0 20px;font:inherit;font-size:14px;font-weight:500;color:#fff;background:var(--blue);border:1px solid var(--blue);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.btn:hover{background:var(--blue-h)}.btn:disabled{opacity:.55;cursor:default}
+.btn.o{background:transparent;color:var(--blue);border-color:var(--bd);margin-top:10px}.btn.o:hover{background:var(--blue-l);border-color:var(--blue)}
+.btn.d{color:var(--red);border-color:var(--bd)}.btn.d:hover{background:#fce8e6;border-color:var(--red)}
+.btn.s{width:auto;height:32px;padding:0 14px;font-size:13px;margin:0}
+.links{display:flex;justify-content:space-between;margin-top:24px;font-size:14px}
+a.lk{color:var(--blue);text-decoration:none;font-weight:500;cursor:pointer}a.lk:hover{text-decoration:underline}
+.view{display:none}.view.on{display:block}
+
+/* Google Account Style Header & Layout */
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;background:#f8f9fa;border:1px solid var(--bd);border-radius:12px;margin-bottom:20px}
+.who{display:flex;align-items:center;gap:14px;min-width:0}
+.av{width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;flex-shrink:0}
+.who h3{margin:0;font-size:16px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.who p{font-size:13px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.pt{background:#fff;border:1px solid var(--bd);color:var(--blue);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+
+/* Google Account Tabs */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--bd);padding-bottom:12px;margin-bottom:24px;overflow-x:auto}
+.tab{background:none;border:none;font:inherit;font-size:14px;font-weight:500;color:var(--sub);padding:8px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:background .2s,color .2s}
+.tab:hover{background:#f1f3f4;color:var(--tx)}
+.tab.on{color:var(--blue);background:var(--blue-l);font-weight:500}
+.panel{display:none}.panel.on{display:block}
+
+/* Google Account Item Cards */
+.item{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:16px 18px;margin-bottom:12px;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:box-shadow .2s}
+.item:hover{box-shadow:0 1px 3px rgba(60,64,67,.12)}
+.item .t{font-weight:500;color:var(--tx)}.item .m{color:var(--sub);font-size:13px;margin-top:4px;word-break:break-all}
+.col{display:block}.col .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pos{color:var(--green);font-weight:600;white-space:nowrap}.neg{color:var(--red);font-weight:600;white-space:nowrap}
+.pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;background:#f1f3f4;color:var(--sub);margin:2px 6px 2px 0;font-weight:500}
+.pill.w{background:#fce8e6;color:var(--red)}.pill.g{background:#e6f4ea;color:var(--green)}
+.note{background:#f8f9fa;border:1px solid var(--bd);border-left:4px solid var(--blue);border-radius:6px;padding:12px 16px;font-size:13px;line-height:1.6;margin:12px 0;color:var(--sub)}
+.secret{background:#f8f9fa;border:1px dashed var(--bd);border-radius:6px;padding:12px;font-family:monospace;font-size:12px;word-break:break-all;margin:8px 0;color:var(--tx)}
+.mono{font-family:monospace;font-size:12px;word-break:break-all}
+.sep{border-top:1px solid var(--bd);margin:24px 0 8px}
+.muted{color:var(--sub);font-size:13px}
+.chk{display:flex;align-items:center;font-size:14px;margin:8px 0;color:var(--tx);cursor:pointer}
+
+/* Verify Screen Enhancement */
+.verify-icon{width:64px;height:64px;background:var(--blue-l);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--blue)}
+.verify-icon svg{width:32px;height:32px}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#323232;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;opacity:0;transition:.3s;z-index:99;max-width:90vw;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+#toast.show{transform:translateX(-50%);opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<div class="brand">
+  <svg viewBox="0 0 100 100" fill="none"><rect width="100" height="100" rx="20" fill="#1a73e8"/><circle cx="50" cy="42" r="12" stroke="#fff" stroke-width="6"/><path d="M50 54V70" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>
+  <div>Sennin<b>Account</b></div>
+</div>
+
+<!-- ログイン -->
+<div id="view-login" class="view on">
+  <h2>ログイン</h2><p class="desc">Sennin Account に進みます</p>
+  <form id="login-form">
+    <div class="field"><input type="email" id="login-email" placeholder="メールアドレス" autocomplete="username" required></div>
+    <div class="field"><input type="password" id="login-password" placeholder="パスワード" autocomplete="current-password" required></div>
+    <div style="margin-bottom:18px"><a class="lk" data-go="forgot" style="font-size:14px">パスワードをお忘れですか？</a></div>
+    <button class="btn" type="submit">ログイン</button>
+  </form>
+  <div class="links"><a class="lk" data-go="register">アカウントを作成</a></div>
+</div>
+
+<!-- 登録 -->
+<div id="view-register" class="view">
+  <h2>アカウントの作成</h2><p class="desc">メールに届く6桁のコードを入力して登録を完了します</p>
+  <form id="register-form">
+    <div class="field"><input type="text" id="reg-name" placeholder="お名前" maxlength="80" autocomplete="name" required></div>
+    <div class="field"><input type="email" id="reg-email" placeholder="メールアドレス" autocomplete="email" required></div>
+    <div class="field"><input type="password" id="reg-password" placeholder="パスワード(12文字以上)" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+    <div class="field"><input type="password" id="reg-password2" placeholder="パスワード(確認)" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+    <button class="btn" type="submit">登録する</button>
+  </form>
+  <div class="links"><a class="lk" data-go="login">すでにアカウントをお持ちの場合</a></div>
+</div>
+
+<!-- メール認証コード (Google風にデザイン強化) -->
+<div id="view-verify" class="view">
+  <div class="verify-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+  </div>
+  <h2>メールアドレスの確認</h2>
+  <p class="desc">ご登録のメールアドレス宛に送信された6桁の認証コードを入力してください。<br><span style="font-size:13px; color:var(--blue)">※有効期限は10分です</span></p>
+  <form id="verify-form">
+    <div class="field"><input type="email" id="verify-email" placeholder="登録したメールアドレス" autocomplete="email" required></div>
+    <div class="field"><input type="text" id="verify-code" placeholder="6桁の認証コード (例: 123456)" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="one-time-code" style="text-align:center;letter-spacing:4px;font-size:18px;font-weight:500;" required></div>
+    <button class="btn" type="submit" style="margin-top:20px">メールを認証する</button>
+  </form>
+  <div class="links" style="justify-content:center"><a class="lk" data-go="login">ログインに戻る</a></div>
+</div>
+
+<!-- 再設定メール依頼 -->
+<div id="view-forgot" class="view">
+  <h2>アカウントの復元</h2><p class="desc">登録したメールアドレスを入力してください。<br>パスワード再設定用のリンクをお送りします。</p>
+  <form id="forgot-form">
+    <div class="field"><input type="email" id="forgot-email" placeholder="メールアドレス" required></div>
+    <button class="btn" type="submit">送信</button>
+  </form>
+  <div class="links"><a class="lk" data-go="login">← ログインに戻る</a></div>
+</div>
+
+<!-- パスワード再設定(メールのリンクから) -->
+<div id="view-reset" class="view">
+  <h2>新しいパスワード</h2><p class="desc">新しいパスワードを設定してください(12文字以上)。<br>設定するとすべての端末からログアウトされます。</p>
+  <form id="reset-form">
+    <div class="field"><input type="password" id="reset-pw" placeholder="新しいパスワード" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+    <div class="field"><input type="password" id="reset-pw2" placeholder="新しいパスワード(確認)" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+    <button class="btn" type="submit">パスワードを設定</button>
+  </form>
+  <div class="links"><a class="lk" data-go="login">← ログインに戻る</a></div>
+</div>
+
+<!-- マイページ (Google Account 風デザイン) -->
+<div id="view-manage" class="view">
+  <div class="head">
+    <div class="who"><div class="av" id="av">U</div><div style="min-width:0"><h3 id="u-name"></h3><p id="u-email"></p></div></div>
+    <div class="pt" title="保有ポイント">⭐ <span id="u-points">0</span> pt</div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+
+  <div class="panel" id="panel-profile">
+    <form id="profile-form">
+      <div class="field"><label class="l">お名前</label><input type="text" id="edit-name" maxlength="80" required></div>
+      <button class="btn" type="submit">名前を保存</button>
+    </form>
+    <div class="sep"></div>
+    <h3>メールアドレスの変更</h3>
+    <p class="muted" id="pending-note" style="margin-bottom:10px"></p>
+    <form id="email-form">
+      <div class="field"><label class="l">新しいメールアドレス</label><input type="email" id="new-email" autocomplete="off" required></div>
+      <div class="field"><label class="l">現在のパスワード</label><input type="password" id="email-pw" autocomplete="current-password" required></div>
+      <button class="btn o" type="submit" style="margin-top:0">確認メールを送信</button>
+    </form>
+    <p class="muted" style="margin-top:12px">新しいアドレスに届くリンクを開くまで変更されません。変更後は全端末がログアウトされます。</p>
+  </div>
+
+  <div class="panel" id="panel-security">
+    <form id="password-form">
+      <div class="field"><label class="l">現在のパスワード</label><input type="password" id="pw-cur" autocomplete="current-password" required></div>
+      <div class="field"><label class="l">新しいパスワード(12文字以上)</label><input type="password" id="pw-new" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+      <div class="field"><label class="l">新しいパスワード(確認)</label><input type="password" id="pw-new2" minlength="12" maxlength="128" autocomplete="new-password" required></div>
+      <button class="btn" type="submit">パスワードを更新</button>
+    </form>
+    <p class="muted" style="margin-top:12px">更新すると、この端末以外はログアウトされます。</p>
+    <div class="sep"></div>
+    <div class="item"><div><div class="t">二段階認証</div><div class="m">準備中です(現在は未対応)</div></div><span class="pill">未対応</span></div>
+  </div>
+
+  <div class="panel" id="panel-sessions"><div id="sessions-list"></div></div>
+  <div class="panel" id="panel-points"><div id="points-list"></div></div>
+  <div class="panel" id="panel-apps"><div id="conn-list"></div></div>
+  <div class="panel" id="panel-dev"><div id="dev-root"></div></div>
+
+  <div style="margin-top:28px"><button class="btn o d" id="logout-btn" style="margin-top:0">ログアウト</button></div>
+</div>
+</div></div>
+<div id="toast"></div>
+
+<script>
+var CFG = <?!= cfgJson ?>;
+(function(){
+'use strict';
+var TOKEN_KEY='sennin_session', memToken='', me=null;
+function $(s){return document.querySelector(s);}
+function h(tag,props){
+  var e=document.createElement(tag);props=props||{};
+  Object.keys(props).forEach(function(k){var v=props[k];
+    if(k==='class')e.className=v;else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);
+    else if(k==='value')e.value=v;else if(k==='checked')e.checked=!!v;
+    else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v);});
+  for(var i=2;i<arguments.length;i++)add(e,arguments[i]);return e;}
+function add(e,c){if(c==null||c===false)return;if(Array.isArray(c)){c.forEach(function(x){add(e,x);});return;}e.append(c.nodeType?c:document.createTextNode(String(c)));}
+function num(n){return Number(n||0).toLocaleString('ja-JP');}
+function fmt(t){return t?new Date(t).toLocaleString('ja-JP'):'-';}
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},3800);}
+
+/* トークンはブラウザ側で保持(GASのUserPropertiesは全訪問者で共有されるため使わない) */
+function getToken(){try{return localStorage.getItem(TOKEN_KEY)||memToken;}catch(e){return memToken;}}
+function setToken(t){memToken=t||'';try{if(t)localStorage.setItem(TOKEN_KEY,t);else localStorage.removeItem(TOKEN_KEY);}catch(e){}}
+
+function call(action,payload){
+  return new Promise(function(resolve){
+    if(!window.google||!google.script||!google.script.run){resolve({ok:false,status:0,error:'Google Apps Script のWebアプリとして開いてください'});return;}
+    google.script.run.withSuccessHandler(resolve).withFailureHandler(function(e){resolve({ok:false,status:0,error:'通信エラーが発生しました'});}).api(action,payload||{},getToken());
+  }).then(function(r){
+    if(r&&r.status===401&&getToken()&&action!=='login'){setToken('');me=null;go('login');toast('ログインの有効期限が切れました。再ログインしてください');}
+    return r;});}
+function act(action,payload,okMsg,after,btn){
+  if(btn)btn.disabled=true;
+  return call(action,payload).then(function(r){
+    if(btn)btn.disabled=false;
+    if(!r||!r.ok){toast((r&&r.error)||'処理に失敗しました');return r;}
+    if(r.user&&action!=='login')setMe(r.user);
+    if(okMsg!==false)toast(okMsg||r.message||'完了しました');
+    if(after)after(r);return r;});}
+
+function deviceName(){
+  var u=navigator.userAgent,b='ブラウザ',o='';
+  if(/Edg\//.test(u))b='Edge';else if(/OPR\//.test(u))b='Opera';else if(/Chrome\//.test(u))b='Chrome';else if(/Firefox\//.test(u))b='Firefox';else if(/Safari\//.test(u))b='Safari';
+  if(/Windows/.test(u))o='Windows';else if(/iPhone|iPad/.test(u))o='iOS';else if(/Android/.test(u))o='Android';else if(/Mac OS/.test(u))o='macOS';else if(/Linux/.test(u))o='Linux';
+  return b+(o?' / '+o:'');}
+
+/* ---------- views ---------- */
+function go(v){
+  document.querySelectorAll('.view').forEach(function(e){e.classList.remove('on');});
+  $('#view-'+v).classList.add('on');}
+document.querySelectorAll('[data-go]').forEach(function(a){a.addEventListener('click',function(){go(a.getAttribute('data-go'));});});
+
+var TABS=[['profile','プロフィール'],['security','セキュリティ'],['sessions','デバイス'],['points','ポイント'],['apps','連携アプリ'],['dev','開発者設定']];
+var loaders={sessions:loadSessions,points:loadPoints,apps:loadConnections,dev:loadDev};
+function tab(name){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-t')===name);});
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('on',p.id==='panel-'+name);});
+  if(loaders[name])loaders[name]();}
+TABS.forEach(function(t){$('#tabs').append(h('button',{class:'tab','data-t':t[0],onclick:function(){tab(t[0]);}},t[1]));});
+
+function setMe(u){
+  me=u;$('#u-name').textContent=u.name;$('#u-email').textContent=u.email;$('#av').textContent=(u.name||'?').charAt(0);
+  $('#u-points').textContent=num(u.points);$('#edit-name').value=u.name;
+  $('#pending-note').textContent=u.pendingEmail?('確認待ちの新しいメールアドレス: '+u.pendingEmail):'';}
+function enter(){go('manage');tab('profile');}
+
+/* ---------- forms ---------- */
+function same(a,b){if(a!==b){toast('確認用のパスワードが一致しません');return false;}return true;}
+$('#login-form').addEventListener('submit',function(e){e.preventDefault();
+  act('login',{email:$('#login-email').value,password:$('#login-password').value,device:deviceName()},false,function(r){
+    setToken(r.token);setMe(r.user);$('#login-password').value='';enter();toast('ログインしました');},e.submitter);});
+$('#register-form').addEventListener('submit',function(e){e.preventDefault();
+  if(!same($('#reg-password').value,$('#reg-password2').value))return;
+  act('register',{name:$('#reg-name').value,email:$('#reg-email').value,password:$('#reg-password').value},null,function(){
+    $('#verify-email').value=$('#reg-email').value;$('#register-form').reset();go('verify');},e.submitter);});
+$('#verify-form').addEventListener('submit',function(e){e.preventDefault();
+  act('verifyEmailCode',{email:$('#verify-email').value,code:$('#verify-code').value},null,function(){ $('#verify-form').reset();go('login');toast('メール認証が完了しました');},e.submitter);});
+$('#forgot-form').addEventListener('submit',function(e){e.preventDefault();
+  act('forgotPassword',{email:$('#forgot-email').value},null,function(){go('login');},e.submitter);});
+$('#reset-form').addEventListener('submit',function(e){e.preventDefault();
+  if(!same($('#reset-pw').value,$('#reset-pw2').value))return;
+  act('resetPassword',{token:CFG.resetToken,password:$('#reset-pw').value},null,function(){
+    CFG.resetToken='';$('#reset-form').reset();go('login');},e.submitter);});
+$('#profile-form').addEventListener('submit',function(e){e.preventDefault();act('profile',{name:$('#edit-name').value},null,null,e.submitter);});
+$('#email-form').addEventListener('submit',function(e){e.preventDefault();
+  act('changeEmail',{newEmail:$('#new-email').value,password:$('#email-pw').value},null,function(){
+    $('#email-form').reset();$('#pending-note').textContent='確認待ちの新しいメールアドレス: '+'(メールのリンクを開いてください)';},e.submitter);});
+$('#password-form').addEventListener('submit',function(e){e.preventDefault();
+  if(!same($('#pw-new').value,$('#pw-new2').value))return;
+  act('changePassword',{currentPassword:$('#pw-cur').value,newPassword:$('#pw-new').value},null,function(){$('#password-form').reset();},e.submitter);});
+$('#logout-btn').addEventListener('click',function(){call('logout').then(function(){setToken('');me=null;go('login');toast('ログアウトしました');});});
+
+/* ---------- devices ---------- */
+function loadSessions(){var box=$('#sessions-list');box.textContent='読み込み中…';
+  call('sessions').then(function(r){box.textContent='';if(!r.ok){box.textContent=r.error;return;}
+    box.append(h('p',{class:'muted',style:'margin-bottom:12px'},'このアカウントにログイン中の端末です。'));
+    r.sessions.forEach(function(s){box.append(h('div',{class:'item'},
+      h('div',{},h('div',{class:'t'},s.device+(s.current?'(この端末)':'')),h('div',{class:'m'},'ログイン '+fmt(s.createdAt)+' / 最終利用 '+fmt(s.lastUsedAt))),
+      s.current?h('span',{class:'pill g'},'この端末'):h('button',{class:'btn o d s',onclick:function(){act('revokeSession',{id:s.id},'ログアウトしました',loadSessions);}},'ログアウト')));});
+    if(r.sessions.length>1)box.append(h('button',{class:'btn o d',onclick:function(){if(confirm('この端末以外をすべてログアウトしますか?'))act('revokeOthers',{},null,loadSessions);}},'ほかの端末をすべてログアウト'));});}
+
+/* ---------- points ---------- */
+function loadPoints(){var box=$('#points-list');box.textContent='読み込み中…';
+  call('pointHistory').then(function(r){box.textContent='';if(!r.ok){box.textContent=r.error;return;}
+    if(me){me.points=r.points;$('#u-points').textContent=num(r.points);}
+    box.append(h('p',{class:'muted',style:'margin-bottom:12px'},'ポイントの増減履歴(直近50件)です。'));
+    if(!r.history.length)box.append(h('p',{class:'muted'},'履歴はまだありません'));
+    r.history.forEach(function(x){box.append(h('div',{class:'item'},
+      h('div',{},h('div',{class:'t'},x.reason),h('div',{class:'m'},fmt(x.createdAt)+' / '+x.source+' / 残高 '+num(x.balanceAfter))),
+      h('span',{class:x.delta>0?'pos':'neg'},(x.delta>0?'+':'')+num(x.delta)+' pt')));});});}
+
+/* ---------- connected apps ---------- */
+function loadConnections(){var box=$('#conn-list');box.textContent='読み込み中…';
+  call('connections').then(function(r){box.textContent='';if(!r.ok){box.textContent=r.error;return;}
+    box.append(h('p',{class:'muted',style:'margin-bottom:12px'},'あなたのアカウントへのアクセスを許可しているアプリです。'));
+    if(!r.connections.length)box.append(h('p',{class:'muted'},'連携中のアプリはありません'));
+    r.connections.forEach(function(c){box.append(h('div',{class:'item'},
+      h('div',{},h('div',{class:'t'},c.name),h('div',{class:'m'},c.scopes.map(function(s){return h('span',{class:s==='points:write'?'pill w':'pill'},s);})),h('div',{class:'m'},'許可日 '+fmt(c.updatedAt))),
+      h('button',{class:'btn o d s',onclick:function(){if(confirm('「'+c.name+'」の連携を解除しますか?'))act('revokeConnection',{clientId:c.clientId},null,loadConnections);}},'解除')));});});}
+
+/* ---------- developer settings ---------- */
+function copy(text){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast('コピーしました');},fallback);return;}}catch(e){}
+  fallback();
+  function fallback(){var t=document.createElement('textarea');t.value=text;document.body.append(t);t.select();try{document.execCommand('copy');toast('コピーしました');}catch(e){toast('コピーできませんでした。手動で選択してください');}t.remove();}}
+var DEV=[['profile','profile — 名前・ユーザーID'],['email','email — メールアドレス'],['points:read','points:read — ポイント残高の参照']];
+function scopeChecks(sel){return DEV.map(function(s){return h('label',{class:'chk'},h('input',{type:'checkbox',value:s[0],checked:sel.indexOf(s[0])>=0}),s[1]);});}
+function picked(root){return Array.prototype.map.call(root.querySelectorAll('input[type=checkbox]:checked'),function(c){return c.value;});}
+function secretBox(secret,id){return h('div',{class:'note'},h('b',{},'クライアントシークレット(この画面でしか表示されません)'),
+  id?h('div',{class:'secret'},'client_id: '+id):null,h('div',{class:'secret'},secret),
+  h('button',{class:'btn o s',onclick:function(){copy(secret);}},'シークレットをコピー'));}
+function appForm(a,onDone,secretHolder){
+  var isNew=!a;a=a||{name:'',description:'',redirectUris:[],scopes:['profile']};
+  var nm=h('input',{value:a.name,maxlength:'60',placeholder:'アプリ名',required:true}),ds=h('input',{value:a.description||'',maxlength:'200',placeholder:'説明(同意画面に表示)'});
+  var ru=h('textarea',{placeholder:'https://example.com/callback'});ru.value=a.redirectUris.join('\n');
+  var sc=h('div',{},scopeChecks(a.scopes));
+  var f=h('form',{},h('div',{class:'field'},h('label',{class:'l'},'アプリ名'),nm),h('div',{class:'field'},h('label',{class:'l'},'説明'),ds),
+    h('div',{class:'field'},h('label',{class:'l'},'リダイレクトURI(1行に1件・httpsのみ / localhostはhttp可)'),ru),
+    h('div',{class:'field'},h('label',{class:'l'},'要求するスコープ'),sc),
+    a.scopes.indexOf('points:write')>=0?h('div',{class:'note'},'このアプリには管理者が「ポイント管理(points:write)」を承認済みです。この権限は開発者側では変更できません。'):null,
+    h('button',{class:'btn',type:'submit'},isNew?'アプリを登録':'保存'));
+  f.addEventListener('submit',function(e){e.preventDefault();
+    var body={name:nm.value,description:ds.value,redirectUris:ru.value.split('\n'),scopes:picked(sc)};
+    if(!isNew)body.id=a.id;
+    act(isNew?'createApp':'updateApp',body,null,function(r){if(r.clientSecret)secretHolder(r.clientSecret,r.app.id);onDone();},e.submitter);});
+  return f;}
+function loadDev(){var root=$('#dev-root');root.textContent='読み込み中…';
+  call('apps').then(function(r){root.textContent='';if(!r.ok){root.textContent=r.error;return;}
+    var secretArea=h('div',{});
+    function showSecret(s,id){secretArea.textContent='';secretArea.append(secretBox(s,id));}
+    var newWrap=h('div',{style:'display:none;margin-top:12px'},appForm(null,loadDev,showSecret));
+    root.append(h('p',{class:'muted',style:'margin-bottom:10px'},'自分のアプリを登録して OAuth 2.0 でユーザーのアカウント情報にアクセスできます。'),
+      h('div',{class:'note'},'ポイントを加算・減算できる権限(points:write)は管理者のみが付与できます。必要な場合は管理者に申請してください。'),
+      secretArea,
+      h('button',{class:'btn',onclick:function(){newWrap.style.display=newWrap.style.display==='none'?'block':'none';}},'+ 新しいアプリを登録'),newWrap);
+    if(!r.apps.length)root.append(h('p',{class:'muted',style:'margin-top:14px'},'登録済みのアプリはありません'));
+    r.apps.forEach(function(a){
+      var edit=h('div',{style:'display:none;margin-top:12px'},appForm(a,loadDev,showSecret));
+      root.append(h('div',{class:'item col',style:'margin-top:14px'},
+        h('div',{class:'row'},h('div',{class:'t'},a.name),a.status==='active'?h('span',{class:'pill g'},'有効'):h('span',{class:'pill w'},'管理者により無効化')),
+        h('div',{class:'m'},a.description||''),
+        h('div',{class:'mono',style:'margin-top:6px'},'client_id: '+a.id+' ',h('a',{class:'lk',onclick:function(){copy(a.id);}},'[コピー]')),
+        h('div',{style:'margin-top:6px'},a.scopes.map(function(s){return h('span',{class:s==='points:write'?'pill w':'pill'},s==='points:write'?'points:write(管理者承認済み)':s);})),
+        h('div',{class:'m',style:'margin-top:6px'},a.redirectUris.map(function(u){return h('div',{},u);})),
+        h('div',{style:'display:flex;gap:6px;flex-wrap:wrap;margin-top:10px'},
+          h('button',{class:'btn o s',onclick:function(){edit.style.display=edit.style.display==='none'?'block':'none';}},'編集'),
+          h('button',{class:'btn o s',onclick:function(){if(confirm('シークレットを再発行します。古いシークレットは直ちに使えなくなります。'))act('rotateAppSecret',{id:a.id},null,function(x){showSecret(x.clientSecret,a.id);window.scrollTo(0,0);});}},'シークレット再発行'),
+          h('button',{class:'btn o d s',onclick:function(){if(confirm('「'+a.name+'」を削除しますか?ユーザーの連携も失われます。'))act('deleteApp',{id:a.id},null,loadDev);}},'削除')),edit));});
+    var b=CFG.apiBase||'https://(Worker URL)';
+    root.append(h('h3',{},'エンドポイント'),
+      h('div',{class:'secret'},'認可: '+b+'/oauth/authorize\nトークン: '+b+'/oauth/token\nユーザー情報: '+b+'/oauth/userinfo\n失効: '+b+'/oauth/revoke\nメタデータ: '+b+'/.well-known/oauth-authorization-server'),
+      h('p',{class:'muted'},'認可コードフロー(response_type=code)。PKCE(code_challenge_method=S256)に対応し、公開クライアントでは利用を強く推奨します。アクセストークンは1時間、リフレッシュトークンは30日(使用ごとに更新)です。トークン要求はclient_secret_basic または client_secret_post で認証します。'));});}
+
+/* ---------- boot ---------- */
+if(CFG.resetToken){go('reset');}
+else if(getToken()){call('me').then(function(r){if(r&&r.ok){setMe(r.user);if(r.user)setMe(Object.assign({},r.user,{pendingEmail:r.user.pendingEmail}));enter();}else{setToken('');}});}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Sennin Admin</title>
+<style>
+:root{--blue:#1a73e8;--blue-h:#1557b0;--bd:#dadce0;--tx:#202124;--sub:#5f6368;--red:#d93025;--green:#137333;--bg:#f6f8fc}
+*{box-sizing:border-box}
+body{margin:0;font-family:Roboto,"Noto Sans JP",-apple-system,"Segoe UI",sans-serif;color:var(--tx);background:var(--bg);font-size:14px}
+header{background:#fff;border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:5}
+header .logo{font-size:18px}header .logo b{color:var(--blue);font-weight:500}
+header .badge{background:#fce8e6;color:var(--red);font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+header .sp{flex:1}
+nav{display:flex;gap:4px;padding:8px 20px;background:#fff;border-bottom:1px solid var(--bd);overflow-x:auto}
+nav button{background:none;border:none;padding:8px 14px;border-radius:6px;font-size:14px;color:var(--sub);cursor:pointer;white-space:nowrap;font:inherit}
+nav button.on{background:#e8f0fe;color:var(--blue);font-weight:500}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.panel{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:18px;margin-bottom:16px}
+h2{font-size:16px;margin:0 0 12px;font-weight:500}h3{font-size:14px;margin:16px 0 8px;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.stat{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:14px}.stat .n{font-size:24px;font-weight:500}.stat .l{color:var(--sub);font-size:12px;margin-top:2px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid #eee;font-size:13px;vertical-align:top}th{color:var(--sub);font-weight:500;font-size:12px}
+tr.click{cursor:pointer}tr.click:hover{background:#f8f9fa}.tw{overflow-x:auto}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:4px;background:#fff;color:var(--tx);max-width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--blue);border-color:transparent}
+textarea{width:100%;min-height:70px;font-family:monospace;font-size:12px}
+label.f{display:block;font-size:12px;color:var(--sub);margin:10px 0 4px}
+button.b{font:inherit;font-weight:500;padding:8px 14px;border-radius:4px;border:1px solid var(--bd);background:#fff;color:var(--blue);cursor:pointer}
+button.b:hover{background:#e8f0fe}button.b.p{background:var(--blue);color:#fff;border-color:var(--blue)}button.b.p:hover{background:var(--blue-h)}
+button.b.d{color:var(--red)}button.b.d:hover{background:#fce8e6}button.b:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row>*{margin:0}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:#e8eaed;color:var(--sub)}
+.pill.ok{background:#e6f4ea;color:var(--green)}.pill.ng{background:#fce8e6;color:var(--red)}.pill.warn{background:#fef7e0;color:#b06000}
+.muted{color:var(--sub)}.mono{font-family:monospace;font-size:12px;word-break:break-all}
+.pos{color:var(--green);font-weight:600}.neg{color:var(--red);font-weight:600}
+#login{max-width:380px;margin:12vh auto;padding:0 16px}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#323232;color:#fff;padding:10px 18px;border-radius:4px;display:none;z-index:50;max-width:90vw}
+.ov{position:fixed;inset:0;background:rgba(32,33,36,.5);display:flex;justify-content:center;align-items:flex-start;padding:4vh 12px;overflow:auto;z-index:20}
+.md{background:#fff;border-radius:8px;width:100%;max-width:720px;padding:20px}
+.md .hd{display:flex;align-items:center;gap:12px;margin-bottom:8px}.md .hd h2{flex:1;margin:0}
+.warn-box{background:#fef7e0;border:1px solid #f9e0a0;border-radius:6px;padding:10px 12px;font-size:12px;margin:8px 0}
+.danger-box{background:#fce8e6;border:1px solid #f5c2bd;border-radius:6px;padding:12px;margin-top:8px}
+.secret{background:#f1f3f4;border:1px dashed var(--bd);border-radius:6px;padding:10px;font-family:monospace;font-size:13px;word-break:break-all;margin:8px 0}
+.chk{display:block;margin:6px 0;font-size:13px}.chk input{margin-right:6px}
+</style>
+</head>
+<body>
+<div id="login" hidden>
+  <div class="panel">
+    <div style="font-size:20px;margin-bottom:6px">Sennin<b style="color:#1a73e8;font-weight:500">Account</b> <span class="pill ng">ADMIN</span></div>
+    <p class="muted" style="margin:0 0 14px">管理者パスワードを入力してください</p>
+    <form id="lf">
+      <input id="lpw" type="password" autocomplete="current-password" placeholder="パスワード" required style="width:100%;margin-bottom:12px">
+      <button class="b p" style="width:100%" type="submit">ログイン</button>
+    </form>
+    <p id="lerr" class="neg" style="margin:10px 0 0"></p>
+  </div>
+</div>
+<div id="app" hidden>
+  <header><div class="logo">Sennin<b>Account</b></div><span class="badge">管理者</span><div class="sp"></div><button class="b" id="logout">ログアウト</button></header>
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+<div id="toast"></div>
+<script>
+(function(){
+'use strict';
+var token='', csrf='';
+
+function $(s){return document.querySelector(s);}
+function h(tag,props){
+  var e=document.createElement(tag);props=props||{};
+  Object.keys(props).forEach(function(k){var v=props[k];
+    if(k==='class')e.className=v;
+    else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),v);
+    else if(k==='value')e.value=v;
+    else if(k==='checked')e.checked=!!v;
+    else if(v===true)e.setAttribute(k,'');
+    else if(v!==false&&v!=null)e.setAttribute(k,v);});
+  for(var i=2;i<arguments.length;i++){add(e,arguments[i]);}
+  return e;}
+function add(e,c){if(c==null||c===false)return;if(Array.isArray(c)){c.forEach(function(x){add(e,x);});return;}e.append(c.nodeType?c:document.createTextNode(String(c)));}
+function fmt(t){return t?new Date(t).toLocaleString('ja-JP'):'-';}
+function num(n){return Number(n||0).toLocaleString('ja-JP');}
+var tt;function toast(m){var t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(function(){t.style.display='none';},3500);}
+
+/* GAS の google.script.run 経由で Worker の管理者APIを呼ぶ */
+function api(path,method,body){
+  return new Promise(function(resolve,reject){
+    if(!(window.google&&google.script&&google.script.run)){reject(new Error('Google Apps Script のWebアプリとして開いてください'));return;}
+    google.script.run
+      .withSuccessHandler(function(j){
+        if(!j){reject(new Error('応答がありません'));return;}
+        if(j.status===401&&path!=='/login'){showLogin();reject(new Error('セッションが切れました。再ログインしてください'));return;}
+        if(j.ok===false){reject(new Error(j.error||('エラー '+j.status)));return;}
+        resolve(j);
+      })
+      .withFailureHandler(function(){reject(new Error('通信エラーが発生しました'));})
+      .adminCall(method||'GET',path,body||{},token,csrf);
+  });
+}
+function guard(p){return p.catch(function(e){toast(e.message);throw e;});}
+
+/* 確認ダイアログ(iframe 内でも確実に動くよう自前実装)。OK で値(入力欄あり: 文字列 / なし: true)、キャンセルで null */
+function ask(title,msg,opt){
+  opt=opt||{};
+  return new Promise(function(resolve){
+    var done=false,inp=null,ov;
+    if(opt.input)inp=h('input',{placeholder:opt.placeholder||'',style:'width:100%;margin-top:8px'});
+    function fin(v){if(done)return;done=true;if(ov)ov.remove();resolve(v);}
+    ov=h('div',{class:'ov'},h('div',{class:'md'},h('h2',{},title),h('p',{style:'white-space:pre-wrap;line-height:1.7'},msg),inp,
+      h('div',{class:'row',style:'margin-top:14px;justify-content:flex-end'},
+        h('button',{class:'b',onclick:function(){fin(null);}},'キャンセル'),
+        h('button',{class:'b '+(opt.danger?'d':'p'),onclick:function(){fin(inp?inp.value:true);}},opt.ok||'実行'))));
+    ov.addEventListener('mousedown',function(e){if(e.target===ov)fin(null);});
+    document.body.append(ov);
+    if(inp)inp.focus();
+  });
+}
+
+/* ---------- login ---------- */
+function showLogin(){$('#app').hidden=true;$('#login').hidden=false;token='';csrf='';$('#lpw').value='';}
+function showApp(){$('#login').hidden=true;$('#app').hidden=false;go(cur||'overview');}
+$('#lf').addEventListener('submit',function(ev){ev.preventDefault();$('#lerr').textContent='';
+  api('/login','POST',{password:$('#lpw').value}).then(function(j){token=j.token;csrf=j.csrf;$('#lpw').value='';showApp();}).catch(function(e){$('#lerr').textContent=e.message;});});
+$('#logout').addEventListener('click',function(){api('/logout','POST').catch(function(){}).then(showLogin);});
+
+/* ---------- nav ---------- */
+var TABS=[['overview','概要'],['users','ユーザー'],['points','ポイント配布'],['apps','連携アプリ'],['audit','監査ログ']];
+var cur='overview';
+function go(t){cur=t;var n=$('#nav');n.textContent='';
+  TABS.forEach(function(x){n.append(h('button',{class:x[0]===t?'on':'',onclick:function(){go(x[0]);}},x[1]));});
+  var m=$('#main');m.textContent='';({overview:overview,users:users,points:points,apps:apps,audit:audit})[t](m);}
+
+/* ---------- overview ---------- */
+function overview(m){
+  guard(api('/stats')).then(function(j){var s=j.stats;
+    var items=[['ユーザー総数',s.users],['メール確認済み',s.verified],['停止中(BAN)',s.banned],['24時間の新規',s.new24h],['7日間の新規',s.new7d],['有効セッション',s.activeSessions],['流通ポイント合計',s.totalPoints],['連携アプリ',s.apps],['ポイント管理アプリ',s.pointsApps]];
+    m.append(h('div',{class:'grid'},items.map(function(x){return h('div',{class:'stat'},h('div',{class:'n'},num(x[1])),h('div',{class:'l'},x[0]));})));});}
+
+/* ---------- users ---------- */
+var uq='',ust='',uoff=0;
+function users(m){
+  var q=h('input',{placeholder:'名前・メール・IDで検索',value:uq,style:'min-width:240px'});
+  var st=h('select',{},[['','すべて'],['active','有効'],['banned','停止中'],['unverified','メール未確認']].map(function(o){return h('option',{value:o[0],selected:o[0]===ust},o[1]);}));
+  var box=h('div',{class:'tw'});var pager=h('div',{class:'row',style:'margin-top:10px'});
+  function load(){guard(api('/users?q='+encodeURIComponent(uq)+'&status='+encodeURIComponent(ust)+'&offset='+uoff)).then(function(j){
+    box.textContent='';pager.textContent='';
+    box.append(h('table',{},h('thead',{},h('tr',{},['名前','メール','状態','ポイント','登録日','最終ログイン'].map(function(x){return h('th',{},x);}))),
+      h('tbody',{},j.users.map(function(u){return h('tr',{class:'click',onclick:function(){openUser(u.id);}},
+        h('td',{},u.name),h('td',{},u.email),h('td',{},u.status==='banned'?h('span',{class:'pill ng'},'停止中'):(u.emailVerified?h('span',{class:'pill ok'},'有効'):h('span',{class:'pill warn'},'未確認'))),
+        h('td',{},num(u.points)),h('td',{class:'muted'},fmt(u.createdAt)),h('td',{class:'muted'},fmt(u.lastLoginAt)));}))));
+    pager.append(h('span',{class:'muted'},'全 '+num(j.total)+' 件'),
+      h('button',{class:'b',disabled:uoff<=0,onclick:function(){uoff=Math.max(0,uoff-50);load();}},'← 前へ'),
+      h('button',{class:'b',disabled:uoff+50>=j.total,onclick:function(){uoff+=50;load();}},'次へ →'));});}
+  function search(){uq=q.value;ust=st.value;uoff=0;load();}
+  q.addEventListener('keydown',function(e){if(e.key==='Enter')search();});st.addEventListener('change',search);
+  m.append(h('div',{class:'panel'},h('div',{class:'row'},q,st,h('button',{class:'b p',onclick:search},'検索')),h('div',{style:'margin-top:12px'},box,pager)));load();}
+
+function modal(title,body){
+  var ov=h('div',{class:'ov'});
+  function close(){ov.remove();}
+  ov.addEventListener('mousedown',function(e){if(e.target===ov)close();});
+  ov.append(h('div',{class:'md'},h('div',{class:'hd'},h('h2',{},title),h('button',{class:'b',onclick:close},'閉じる')),body));
+  document.body.append(ov);return close;}
+
+function openUser(id){
+  var close,body=h('div',{},'読み込み中…');close=modal('ユーザー詳細',body);
+  function render(){guard(api('/users/'+id)).then(function(j){var u=j.user;body.textContent='';
+    body.append(
+      h('div',{},h('b',{},u.name),' ',u.status==='banned'?h('span',{class:'pill ng'},'停止中'):h('span',{class:'pill ok'},'有効'),' ',u.emailVerified?null:h('span',{class:'pill warn'},'メール未確認')),
+      h('div',{class:'muted'},u.email),
+      u.pendingEmail?h('div',{class:'muted'},'変更待ちメール: '+u.pendingEmail):null,
+      h('div',{class:'mono muted'},'ID: '+u.id),
+      h('div',{class:'muted'},'登録: '+fmt(u.createdAt)+' / 最終ログイン: '+fmt(u.lastLoginAt)),
+      u.status==='banned'?h('div',{class:'warn-box'},'停止理由: '+(u.banReason||'-')+'('+fmt(u.bannedAt)+')'):null,
+      h('div',{class:'stat',style:'margin:12px 0'},h('div',{class:'n'},num(u.points)+' pt'),h('div',{class:'l'},'現在のポイント')));
+    var amt=h('input',{type:'number',step:'1',placeholder:'±ポイント',style:'width:130px'}),rs=h('input',{placeholder:'理由(必須)',style:'flex:1;min-width:160px'});
+    body.append(h('h3',{},'ポイントの付与 / 減算'),h('div',{class:'row'},amt,rs,h('button',{class:'b p',onclick:function(){
+      var a=parseInt(amt.value,10);if(!a){toast('ポイントを入力してください');return;}
+      ask('ポイントの変更',u.name+' に '+a+' pt を'+(a>0?'付与':'減算')+'します。よろしいですか?').then(function(ok){if(!ok)return;
+        guard(api('/users/'+id+'/points','POST',{amount:a,reason:rs.value})).then(function(r){toast(r.message);render();});});}},'実行')));
+    var br=h('input',{placeholder:'停止理由(必須)',style:'flex:1;min-width:160px'});
+    body.append(h('h3',{},'アカウント操作'),h('div',{class:'row'},
+      u.status==='banned'
+        ?h('button',{class:'b',onclick:function(){guard(api('/users/'+id+'/unban','POST')).then(function(r){toast(r.message);render();});}},'停止を解除')
+        :[br,h('button',{class:'b d',onclick:function(){if(!br.value){toast('理由を入力してください');return;}
+          ask('アカウントを停止',"このアカウントを停止し、全端末をログアウトします。よろしいですか?",{danger:true,ok:'停止する'}).then(function(ok){if(!ok)return;
+            guard(api('/users/'+id+'/ban','POST',{reason:br.value})).then(function(r){toast(r.message);render();});});}},'BANする')]));
+    body.append(h('div',{class:'row',style:'margin-top:8px'},
+      h('button',{class:'b',onclick:function(){guard(api('/users/'+id+'/revoke-sessions','POST')).then(function(r){toast(r.message);render();});}},'全端末をログアウト'),
+      u.emailVerified?null:h('button',{class:'b',onclick:function(){guard(api('/users/'+id+'/verify-email','POST')).then(function(r){toast(r.message);render();});}},'メール確認済みにする'),
+      h('button',{class:'b',onclick:function(){
+        ask('パスワード再設定メール','ユーザーのメールアドレス宛に、パスワード再設定リンク(1時間有効)を送信します。\n管理者がパスワードを知ることはありません。',{ok:'送信する'}).then(function(ok){if(!ok)return;
+          guard(api('/users/'+id+'/send-reset','POST')).then(function(r){toast(r.message);});});}},'パスワード再設定メールを送る')));
+    body.append(h('div',{class:'muted',style:'font-size:12px;margin-top:6px'},'※パスワードは暗号化(ハッシュ化)して保存しているため、元のパスワードを表示することはできません。'));
+    body.append(h('h3',{},'ログイン中の端末('+j.sessions.length+')'),
+      j.sessions.length?h('div',{class:'tw'},h('table',{},h('tbody',{},j.sessions.map(function(s){return h('tr',{},h('td',{},s.device),h('td',{class:'muted'},'最終 '+fmt(s.lastUsedAt)));})))):h('div',{class:'muted'},'なし'));
+    body.append(h('h3',{},'連携を許可したアプリ'),
+      j.grants.length?h('div',{class:'tw'},h('table',{},h('tbody',{},j.grants.map(function(g){return h('tr',{},h('td',{},g.app),h('td',{class:'mono'},g.scopes),h('td',{class:'muted'},fmt(g.updatedAt)));})))):h('div',{class:'muted'},'なし'));
+    body.append(h('h3',{},'ポイント履歴(直近30件)'),
+      j.ledger.length?h('div',{class:'tw'},h('table',{},h('thead',{},h('tr',{},['日時','増減','残高','理由','付与元'].map(function(x){return h('th',{},x);}))),h('tbody',{},j.ledger.map(function(l){
+        return h('tr',{},h('td',{class:'muted'},fmt(l.createdAt)),h('td',{class:l.delta>0?'pos':'neg'},(l.delta>0?'+':'')+num(l.delta)),h('td',{},num(l.balanceAfter)),h('td',{},l.reason),h('td',{class:'muted'},l.source));})))):h('div',{class:'muted'},'なし'));
+    body.append(h('h3',{style:'color:#d93025'},'危険な操作'),h('div',{class:'danger-box'},
+      h('div',{style:'margin-bottom:8px'},'アカウントを完全に削除します。プロフィール・ポイント履歴・連携・開発者アプリなど関連データは全て消えて元に戻せません。'),
+      h('button',{class:'b d',onclick:function(){
+        ask('アカウントを完全に削除',u.name+' ('+u.email+') のアカウントと関連データを完全に削除します。\n取り消しはできません。確認のため、このユーザーのメールアドレスを入力してください。',{input:true,placeholder:u.email,danger:true,ok:'完全に削除'}).then(function(v){
+          if(v===null)return;
+          guard(api('/users/'+id+'/delete','POST',{confirmEmail:v})).then(function(r){toast(r.message);close();uoff=0;if(cur==='users')go('users');});});}},'このアカウントを完全に削除')));
+  });}
+  render();}
+
+/* ---------- points distribution ---------- */
+function points(m){
+  var target=h('select',{},h('option',{value:'all'},'全ユーザー(有効かつメール確認済み)'),h('option',{value:'emails'},'メールアドレスを指定'));
+  var emails=h('textarea',{placeholder:'1行に1件(またはカンマ区切り・最大100件)',hidden:true});
+  var amt=h('input',{type:'number',min:'1',step:'1',placeholder:'配布ポイント',style:'width:160px'});
+  var rs=h('input',{placeholder:'理由(必須・ユーザーの履歴に表示されます)',style:'width:100%'});
+  var out=h('div',{style:'margin-top:12px'});
+  target.addEventListener('change',function(){emails.hidden=target.value!=='emails';});
+  function body(extra){var b={target:target.value,amount:parseInt(amt.value,10),reason:rs.value,emails:emails.value};for(var k in extra)b[k]=extra[k];return b;}
+  function preview(){out.textContent='';
+    guard(api('/points/distribute','POST',body({dryRun:true}))).then(function(j){
+      out.append(h('div',{class:'warn-box'},'対象: '+num(j.count)+' 人 × '+num(parseInt(amt.value,10)||0)+' pt = 合計 '+num(j.count*(parseInt(amt.value,10)||0))+' pt を配布します。',
+        j.skipped&&j.skipped.length?h('div',{},'対象外(未登録・停止中・未確認): '+j.skipped.join(', ')):null),
+        h('button',{class:'b p',disabled:!j.count,onclick:function(){
+          ask('一括配布',num(j.count)+'人に配布します。取り消せません。よろしいですか?',{ok:'配布する'}).then(function(ok){if(!ok)return;
+            guard(api('/points/distribute','POST',body({expect:j.count}))).then(function(r){toast(r.message);out.textContent='';amt.value='';rs.value='';});});}},'配布を実行'));});}
+  m.append(h('div',{class:'panel'},h('h2',{},'ポイント一括配布'),
+    h('label',{class:'f'},'対象'),target,emails,h('label',{class:'f'},'ポイント(加算のみ)'),amt,h('label',{class:'f'},'理由'),rs,
+    h('div',{style:'margin-top:12px'},h('button',{class:'b',onclick:preview},'対象をプレビュー')),out),
+    h('div',{class:'panel muted'},'個別ユーザーへの付与・減算は「ユーザー」タブの詳細画面から行えます。全ての操作はポイント履歴と監査ログに記録されます。'));}
+
+/* ---------- apps ---------- */
+var SC=[['profile','profile — 名前・ユーザーID'],['email','email — メールアドレス'],['points:read','points:read — ポイント残高の参照'],['points:write','points:write — ポイントの加算・減算(管理者のみ付与可)']];
+function copyText(s){
+  var ta=h('textarea',{style:'position:fixed;left:-9999px;top:0'});ta.value=s;document.body.append(ta);ta.select();
+  var ok=false;try{ok=document.execCommand('copy');}catch(e){}
+  ta.remove();toast(ok?'コピーしました':'コピーできませんでした。手動で選択してください');}
+function showSecret(title,secret,id){
+  var body=h('div',{},id?h('div',{},'クライアントID',h('div',{class:'secret'},id)):null,h('div',{},'クライアントシークレット',h('div',{class:'secret'},secret)),
+    h('div',{class:'warn-box'},'シークレットはこの画面でしか表示されません。今のうちに安全な場所へ保存してください。'),
+    h('button',{class:'b',onclick:function(){copyText(secret);}},'シークレットをコピー'));
+  modal(title,body);}
+function appForm(a,done){
+  var isNew=!a;a=a||{name:'',description:'',redirectUris:[],scopes:['profile'],pointsDailyLimit:10000,status:'active'};
+  var nm=h('input',{value:a.name,style:'width:100%',maxlength:'60'}),ds=h('input',{value:a.description||'',style:'width:100%',maxlength:'200'});
+  var ru=h('textarea',{});ru.value=a.redirectUris.join('\n');
+  var chks=SC.map(function(s){return h('input',{type:'checkbox',value:s[0],checked:a.scopes.indexOf(s[0])>=0});});
+  var lim=h('input',{type:'number',min:'1',value:String(a.pointsDailyLimit),style:'width:160px'});
+  var stt=h('select',{},h('option',{value:'active',selected:a.status==='active'},'有効'),h('option',{value:'disabled',selected:a.status==='disabled'},'無効(トークンも失効)'));
+  function data(){return {name:nm.value,description:ds.value,redirectUris:ru.value.split('\n'),scopes:chks.filter(function(c){return c.checked;}).map(function(c){return c.value;}),pointsDailyLimit:parseInt(lim.value,10),status:stt.value};}
+  var close;
+  var body=h('div',{},isNew?null:h('div',{class:'mono muted'},'client_id: '+a.id+(a.ownerEmail?' / 開発者: '+a.ownerEmail:' / 管理者登録')),
+    h('label',{class:'f'},'アプリ名'),nm,h('label',{class:'f'},'説明'),ds,h('label',{class:'f'},'リダイレクトURI(1行に1件・httpsのみ)'),ru,
+    h('label',{class:'f'},'許可スコープ'),SC.map(function(s,i){return h('label',{class:'chk'},chks[i],s[1]);}),
+    h('div',{class:'warn-box'},'points:write を付けたアプリは、ユーザーが同意するとそのユーザーのポイントを増減できます。信頼できるアプリにだけ付与してください。'),
+    h('label',{class:'f'},'ポイント増減の上限(24時間・絶対値の合計 / 1回あたりの上限も兼ねる)'),lim,
+    isNew?null:[h('label',{class:'f'},'状態'),stt],
+    h('div',{class:'row',style:'margin-top:16px'},
+      h('button',{class:'b p',onclick:function(){
+        var go2=function(){
+          var p=isNew?guard(api('/apps','POST',data())):guard(api('/apps/'+a.id+'/update','POST',data()));
+          p.then(function(r){close();toast(r.message);if(r.clientSecret)showSecret('アプリを作成しました',r.clientSecret,r.id);done();});};
+        if(chks[3].checked&&!(a.scopes.indexOf('points:write')>=0)){ask('権限の付与','points:write(ポイント管理権限)を付与します。よろしいですか?',{danger:true,ok:'付与する'}).then(function(ok){if(ok)go2();});}
+        else go2();}},isNew?'作成':'保存'),
+      isNew?null:[h('button',{class:'b',onclick:function(){
+        ask('シークレット再発行','シークレットを再発行します。旧シークレットは即時に使えなくなります。',{ok:'再発行する'}).then(function(ok){if(!ok)return;
+          guard(api('/apps/'+a.id+'/rotate','POST')).then(function(r){showSecret('シークレットを再発行しました',r.clientSecret,a.id);});});}},'シークレット再発行'),
+        h('button',{class:'b d',onclick:function(){
+          ask('アプリを削除','「'+a.name+'」を削除します。トークンと連携は全て失われます。',{danger:true,ok:'削除する'}).then(function(ok){if(!ok)return;
+            guard(api('/apps/'+a.id+'/delete','POST')).then(function(r){close();toast(r.message);done();});});}},'削除')]));
+  close=modal(isNew?'アプリを作成':'アプリを編集',body);}
+function apps(m){
+  var box=h('div',{class:'tw'});
+  function load(){guard(api('/apps')).then(function(j){box.textContent='';
+    box.append(h('table',{},h('thead',{},h('tr',{},['アプリ','スコープ','登録元','状態',''].map(function(x){return h('th',{},x);}))),
+      h('tbody',{},j.apps.map(function(a){return h('tr',{},
+        h('td',{},h('b',{},a.name),h('div',{class:'mono muted'},a.id)),
+        h('td',{},a.scopes.map(function(s){return h('span',{class:s==='points:write'?'pill ng':'pill',style:'margin:0 4px 4px 0'},s);})),
+        h('td',{class:'muted'},a.ownerEmail?('開発者 '+a.ownerEmail):'管理者'),
+        h('td',{},a.status==='active'?h('span',{class:'pill ok'},'有効'):h('span',{class:'pill ng'},'無効')),
+        h('td',{},h('button',{class:'b',onclick:function(){appForm(a,load);}},'編集')));}))));
+    if(!j.apps.length)box.append(h('p',{class:'muted'},'アプリはまだありません'));});}
+  m.append(h('div',{class:'panel'},h('div',{class:'row'},h('h2',{style:'flex:1'},'連携アプリ(OAuth 2.0)'),h('button',{class:'b p',onclick:function(){appForm(null,load);}},'新規アプリを作成')),
+    h('p',{class:'muted'},'ポイントを増減できる権限(points:write)は、このパネルからのみ付与できます。開発者がアカウント画面から登録したアプリには付与できません。'),box));load();}
+
+/* ---------- audit ---------- */
+function audit(m){
+  var box=h('div',{class:'tw'});
+  guard(api('/audit')).then(function(j){box.append(h('table',{},h('thead',{},h('tr',{},['日時','操作','対象','詳細','IP'].map(function(x){return h('th',{},x);}))),
+    h('tbody',{},j.entries.map(function(e){return h('tr',{},h('td',{class:'muted'},fmt(e.ts)),h('td',{},e.action),h('td',{},e.target||'-'),h('td',{class:'mono'},e.detail||''),h('td',{class:'muted'},e.ip||''));}))));});
+  m.append(h('div',{class:'panel'},h('h2',{},'監査ログ(直近100件)'),box));}
+
+/* ---------- boot ---------- */
+showLogin();
+})();
+</script>
+</body>
+</html>

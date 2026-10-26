@@ -1,41 +1,14 @@
 {
-  "name": "soralink",
-  "version": "2.2.0",
+  "name": "sennin-account",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
-    "dev:server": "tsx watch server/index.ts",
-    "dev:client": "vite --host 0.0.0.0",
-    "build": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json && vite build",
-    "start": "node dist-server/index.js",
-    "typecheck": "tsc -p tsconfig.app.json && tsc -p tsconfig.server.json --noEmit"
-  },
-  "dependencies": {
-    "@libsql/client": "^0.15.15",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "helmet": "^8.0.0",
-    "lucide-react": "^0.468.0",
-    "multer": "^2.0.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "zod": "^3.24.1"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute sennin-account --remote --file=./schema.sql",
+    "test": "node --test --no-warnings test/flow.test.js"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.8",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.10.5",
-    "@types/multer": "^2.0.0",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
-    "concurrently": "^9.1.2",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.2",
-    "vite": "^6.0.7"
+    "wrangler": "^4"
   }
 }

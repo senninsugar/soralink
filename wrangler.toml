@@ -1,0 +1,18 @@
+name = "sennin-account-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sennin-account"
+database_id = "43a9bfb9-20b8-483a-8930-d1856d7a8bc0"
+
+[vars]
+API_BASE_URL = "https://sennin-account-api.xianrendesu.workers.dev"
+APP_RESET_URL = "https://script.google.com/macros/s/AKfycbxyV3ot__qJ45hdI_SUwegrSJf_8bJyXnoSf-E_xqkBcAHelG6M_mE8i6WGvT9grfH0/exec"
+PBKDF2_ITERATIONS = "2000"
+
+[triggers]
+crons = ["30 18 * * *"]
+
+
